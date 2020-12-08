@@ -335,13 +335,14 @@ class CornersProblem(search.SearchProblem):
             # get the next position in one of the directions
             dx, dy = Actions.directionToVector(action)
             next = nextx, nexty = int(x + dx), int(y + dy)
-            # check if the next position is the wall
+            # check if the next position is a wall
             hitsWall = self.walls[nextx][nexty]
 
             newCorners = set(corners)
             # if the next position is a corner, remove this position from corner list
             if next in newCorners:
                 newCorners.remove(next)
+            # if the next position is not a wall, add this position to the successor list
             if not hitsWall:
                 successors.append((((nextx, nexty), tuple(newCorners)), action, 1))
 
@@ -379,6 +380,26 @@ def cornersHeuristic(state, problem):
     walls = problem.walls # These are the walls of the maze, as a Grid (game.py)
 
     "*** YOUR CODE HERE ***"
+    position, corners = state
+    nextPosition = position
+    cornerList = list(corners)
+
+    total = 0
+    distance = []
+    while cornerList:
+        # use Manhattan Distance for heuristic
+        for i in cornerList:
+            distance.append((util.manhattanDistance(nextPosition, i), i))
+        # sort the heuristic from least to greatest
+        sortedDistance = sorted(distance)
+        # get the heuristic and nearest position from the sorted distance list
+        dist, nearest = sortedDistance[0]
+        # add the heuristic to the total
+        total += dist
+        cornerList.remove(nearest)
+        nextPosition = nearest
+        distance.clear()
+    return total
     return 0 # Default to trivial solution
 
 class AStarCornersAgent(SearchAgent):
