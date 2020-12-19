@@ -392,14 +392,12 @@ def cornersHeuristic(state, problem):
     # sort distance list based on calculated heuristic from least to greatest
     sortedDistance = sorted(distance)
 
-    while cornerList:
+    while sortedDistance:
         # get the position from the least heuristic
         dist, nearestPosition = sortedDistance[0]
         # add the heuristic to total
         total += dist
-        # remove the position from corner list
-        cornerList.remove(nearestPosition)
-        # remove the heuristic and distance from the sorted distance list
+        # remove the heuristic and position from the sorted distance list
         sortedDistance.remove((dist, nearestPosition))
     return total
     return 0 # Default to trivial solution
