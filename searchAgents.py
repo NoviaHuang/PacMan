@@ -338,13 +338,13 @@ class CornersProblem(search.SearchProblem):
             # check if the next position is a wall
             hitsWall = self.walls[nextx][nexty]
 
-            newCorners = set(corners)
+            cornerList = list(corners)
             # if the next position is a corner, remove this position from corner list
-            if next in newCorners:
-                newCorners.remove(next)
+            if next in cornerList:
+                cornerList.remove(next)
             # if the next position is not a wall, add this position to the successor list
             if not hitsWall:
-                successors.append((((nextx, nexty), tuple(newCorners)), action, 1))
+                successors.append((((nextx, nexty), tuple(cornerList)), action, 1))
 
         self._expanded += 1 # DO NOT CHANGE
         return successors
@@ -386,19 +386,21 @@ def cornersHeuristic(state, problem):
 
     total = 0
     distance = []
+    # use Manhattan Distance to calculate heuristic
+    for i in cornerList:
+        distance.append((util.manhattanDistance(nextPosition,i),i))
+    # sort distance list based on calculated heuristic from least to greatest
+    sortedDistance = sorted(distance)
+
     while cornerList:
-        # use Manhattan Distance for heuristic
-        for i in cornerList:
-            distance.append((util.manhattanDistance(nextPosition, i), i))
-        # sort the heuristic from least to greatest
-        sortedDistance = sorted(distance)
-        # get the heuristic and nearest position from the sorted distance list
+        # get the position from the least heuristic
         dist, nearestPosition = sortedDistance[0]
-        # add the heuristic to the total
+        # add the heuristic to total
         total += dist
+        # remove the position from corner list
         cornerList.remove(nearestPosition)
-        nextPosition = nearestPosition
-        distance.clear()
+        # remove the heuristic and distance from the sorted distance list
+        sortedDistance.remove((dist, nearestPosition))
     return total
     return 0 # Default to trivial solution
 
